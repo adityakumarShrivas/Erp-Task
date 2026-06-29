@@ -6,50 +6,32 @@ import {
   useUpdateStepMutation,
   useDeleteStepMutation,
 } from '../../features/api/stepsApi.js'
-import { useGetFormsQuery }  from '../../features/api/formsApi.js'
-import { useGetDoersQuery }  from '../../features/api/authApi.js'
+import { useGetFormsQuery } from '../../features/api/formsApi.js'
+import { useGetDoersQuery } from '../../features/api/authApi.js'
 import toast from 'react-hot-toast'
-import {
-  Plus, Pencil, Trash2, X, Save,
-  User, Clock, FileText, Hash, AlignLeft
-} from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Save, Clock, FileText } from 'lucide-react'
 
 const empty = {
   name: '', order: '', description: '',
   assigneeId: '', buddyId: '', slaMinutes: '', formId: ''
 }
 
+const inputStyle = {
+  width: '100%', padding: '9px 12px',
+  border: '1px solid #e2e8f0', borderRadius: '8px',
+  fontSize: '13px', color: '#0f172a', backgroundColor: 'white',
+  outline: 'none', boxSizing: 'border-box',
+}
+
+const labelStyle = {
+  display: 'block', fontSize: '12px',
+  fontWeight: '500', color: '#475569', marginBottom: '6px',
+}
+
 function StepModal({ initial, onClose, onSave, doers, forms, isLoading }) {
   const [form, setForm] = useState(initial)
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    onSave(form)
-  }
-
-  const inputStyle = {
-    width: '100%',
-    padding: '9px 12px',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '13px',
-    color: '#0f172a',
-    backgroundColor: 'white',
-    outline: 'none',
-    transition: 'border-color 0.15s',
-  }
-
-  const labelStyle = {
-    display: 'block',
-    fontSize: '12px',
-    fontWeight: '500',
-    color: '#475569',
-    marginBottom: '6px',
-  }
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const handleSubmit = (e) => { e.preventDefault(); onSave(form) }
 
   return (
     <div style={{
@@ -62,13 +44,12 @@ function StepModal({ initial, onClose, onSave, doers, forms, isLoading }) {
         border: '1px solid #e2e8f0', width: '100%', maxWidth: '520px',
         boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
       }}>
-
         {/* Header */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '18px 24px', borderBottom: '1px solid #f1f5f9',
         }}>
-          <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#0f172a' }}>
+          <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
             {initial._id ? 'Edit step' : 'Add new step'}
           </h2>
           <button onClick={onClose} style={{
@@ -85,80 +66,48 @@ function StepModal({ initial, onClose, onSave, doers, forms, isLoading }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
               <label style={labelStyle}>Step name *</label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                placeholder="e.g. Production"
-                style={inputStyle}
+              <input name="name" value={form.name} onChange={handleChange} required
+                placeholder="e.g. Production" style={inputStyle}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              />
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
             </div>
             <div>
               <label style={labelStyle}>Sequence order *</label>
-              <input
-                name="order"
-                type="number"
-                value={form.order}
-                onChange={handleChange}
-                required
-                placeholder="1"
-                min="1"
-                style={inputStyle}
+              <input name="order" type="number" value={form.order} onChange={handleChange}
+                required placeholder="1" min="1" style={inputStyle}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              />
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={labelStyle}>Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={3}
-              placeholder="What happens in this step..."
+            <textarea name="description" value={form.description} onChange={handleChange}
+              rows={3} placeholder="What happens in this step..."
               style={{ ...inputStyle, resize: 'none', lineHeight: '1.5' }}
               onFocus={e => e.target.style.borderColor = '#2563eb'}
-              onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-            />
+              onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
               <label style={labelStyle}>Assign doer *</label>
-              <select
-                name="assigneeId"
-                value={form.assigneeId}
-                onChange={handleChange}
-                required
-                style={{ ...inputStyle, cursor: 'pointer' }}
+              <select name="assigneeId" value={form.assigneeId} onChange={handleChange}
+                required style={{ ...inputStyle, cursor: 'pointer' }}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              >
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'}>
                 <option value="">Select doer</option>
-                {doers.map((d) => (
-                  <option key={d._id} value={d._id}>{d.name}</option>
-                ))}
+                {doers.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
               </select>
             </div>
             <div>
               <label style={labelStyle}>Buddy (optional)</label>
-              <select
-                name="buddyId"
-                value={form.buddyId}
-                onChange={handleChange}
+              <select name="buddyId" value={form.buddyId} onChange={handleChange}
                 style={{ ...inputStyle, cursor: 'pointer' }}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              >
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'}>
                 <option value="">No buddy</option>
-                {doers.map((d) => (
-                  <option key={d._id} value={d._id}>{d.name}</option>
-                ))}
+                {doers.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
               </select>
             </div>
           </div>
@@ -166,66 +115,38 @@ function StepModal({ initial, onClose, onSave, doers, forms, isLoading }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
             <div>
               <label style={labelStyle}>SLA (minutes) *</label>
-              <input
-                name="slaMinutes"
-                type="number"
-                value={form.slaMinutes}
-                onChange={handleChange}
-                required
-                placeholder="60"
-                min="1"
-                style={inputStyle}
+              <input name="slaMinutes" type="number" value={form.slaMinutes} onChange={handleChange}
+                required placeholder="60" min="1" style={inputStyle}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              />
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
             </div>
             <div>
               <label style={labelStyle}>Attach form</label>
-              <select
-                name="formId"
-                value={form.formId}
-                onChange={handleChange}
+              <select name="formId" value={form.formId} onChange={handleChange}
                 style={{ ...inputStyle, cursor: 'pointer' }}
                 onFocus={e => e.target.style.borderColor = '#2563eb'}
-                onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-              >
+                onBlur={e => e.target.style.borderColor = '#e2e8f0'}>
                 <option value="">No form</option>
-                {forms.map((f) => (
-                  <option key={f._id} value={f._id}>{f.title}</option>
-                ))}
+                {forms.map(f => <option key={f._id} value={f._id}>{f.title}</option>)}
               </select>
             </div>
           </div>
 
-          {/* Buttons */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                padding: '9px 18px', fontSize: '13px', fontWeight: '500',
-                color: '#475569', backgroundColor: 'white',
-                border: '1px solid #e2e8f0', borderRadius: '8px',
-                cursor: 'pointer',
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              style={{
-                padding: '9px 18px', fontSize: '13px', fontWeight: '500',
-                color: 'white',
-                backgroundColor: isLoading ? '#93c5fd' : '#2563eb',
-                border: 'none', borderRadius: '8px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '6px',
-              }}
-            >
+            <button type="button" onClick={onClose} style={{
+              padding: '9px 18px', fontSize: '13px', fontWeight: '500',
+              color: '#475569', backgroundColor: 'white',
+              border: '1px solid #e2e8f0', borderRadius: '8px', cursor: 'pointer',
+            }}>Cancel</button>
+            <button type="submit" disabled={isLoading} style={{
+              padding: '9px 18px', fontSize: '13px', fontWeight: '500',
+              color: 'white', backgroundColor: isLoading ? '#93c5fd' : '#2563eb',
+              border: 'none', borderRadius: '8px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '6px',
+            }}>
               {isLoading
                 ? <div style={{ width: '14px', height: '14px', border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                : <Save size={14} />
-              }
+                : <Save size={14} />}
               {initial._id ? 'Save changes' : 'Create step'}
             </button>
           </div>
@@ -240,24 +161,22 @@ function StepBuilder() {
   const [editTarget, setEditTarget] = useState(null)
 
   const { data: steps = [], isLoading: loadingSteps } = useGetStepsQuery()
-  const { data: doers = [] }  = useGetDoersQuery()
-  const { data: forms = [] }  = useGetFormsQuery()
+  const { data: doers = [] } = useGetDoersQuery()
+  const { data: forms = [] } = useGetFormsQuery()
 
   const [createStep, { isLoading: creating }] = useCreateStepMutation()
   const [updateStep, { isLoading: updating }] = useUpdateStepMutation()
   const [deleteStep] = useDeleteStepMutation()
 
   const openCreate = () => { setEditTarget(null); setShowModal(true) }
-  const openEdit   = (step) => {
+  const openEdit = (step) => {
     setEditTarget({
-      _id:         step._id,
-      name:        step.name,
-      order:       step.order,
+      _id: step._id, name: step.name, order: step.order,
       description: step.description || '',
-      assigneeId:  step.assigneeId?._id || '',
-      buddyId:     step.buddyId?._id    || '',
-      slaMinutes:  step.slaMinutes,
-      formId:      step.formId?._id     || '',
+      assigneeId: step.assigneeId?._id || '',
+      buddyId: step.buddyId?._id || '',
+      slaMinutes: step.slaMinutes,
+      formId: step.formId?._id || '',
     })
     setShowModal(true)
   }
@@ -287,6 +206,13 @@ function StepBuilder() {
     }
   }
 
+  const thStyle = {
+    textAlign: 'left', fontSize: '11px', fontWeight: '600',
+    color: '#94a3b8', padding: '10px 20px', textTransform: 'uppercase', letterSpacing: '0.04em',
+  }
+
+  const tdStyle = { padding: '12px 20px', borderBottom: '1px solid #f8fafc' }
+
   return (
     <Layout title="Step builder" subtitle="Configure your workflow steps">
 
@@ -295,123 +221,140 @@ function StepBuilder() {
           initial={editTarget || empty}
           onClose={() => setShowModal(false)}
           onSave={handleSave}
-          doers={doers}
-          forms={forms}
+          doers={doers} forms={forms}
           isLoading={creating || updating}
         />
       )}
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">
-              {steps.length} step{steps.length !== 1 ? 's' : ''} configured
-            </p>
-          </div>
-          <button
-            onClick={openCreate}
-            className="flex items-center gap-2 px-6 py-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
-          >
-            <Plus size={16} />
-            Add Step
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+        {/* Toolbar */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>
+            {steps.length} step{steps.length !== 1 ? 's' : ''} configured
+          </p>
+          <button onClick={openCreate} style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '9px 16px', backgroundColor: '#2563eb', color: 'white',
+            fontSize: '13px', fontWeight: '500', border: 'none',
+            borderRadius: '8px', cursor: 'pointer',
+          }}>
+            <Plus size={15} /> Add step
           </button>
         </div>
 
+        {/* Content */}
         {loadingSteps ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '64px 0' }}>
+            <div style={{ width: '24px', height: '24px', border: '2px solid #2563eb', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
           </div>
         ) : steps.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 border-dashed py-16 text-center mt-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <FileText size={22} className="text-slate-400" />
+          <div style={{
+            backgroundColor: 'white', borderRadius: '12px',
+            border: '1px dashed #cbd5e1', padding: '64px 20px', textAlign: 'center',
+          }}>
+            <div style={{
+              width: '48px', height: '48px', backgroundColor: '#f1f5f9',
+              borderRadius: '12px', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', margin: '0 auto 12px',
+            }}>
+              <FileText size={22} color="#94a3b8" />
             </div>
-            <p className="text-sm font-medium text-slate-600">No steps yet</p>
-            <p className="text-xs text-slate-400 mt-1">Add your first workflow step to get started</p>
-            <button
-              onClick={openCreate}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
-            >
-              Add first step
-            </button>
+            <p style={{ fontSize: '14px', fontWeight: '500', color: '#475569', margin: '0 0 4px' }}>No steps yet</p>
+            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 16px' }}>Add your first workflow step to get started</p>
+            <button onClick={openCreate} style={{
+              padding: '9px 18px', backgroundColor: '#2563eb', color: 'white',
+              fontSize: '13px', fontWeight: '500', border: 'none',
+              borderRadius: '8px', cursor: 'pointer',
+            }}>Add first step</button>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full">
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3 w-10">#</th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3">Step name</th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3">Doer</th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3">Buddy</th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3">SLA</th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-5 py-3">Form</th>
-                  <th className="text-right text-xs font-medium text-slate-500 px-5 py-3">Actions</th>
+                <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <th style={{ ...thStyle, width: '40px' }}>#</th>
+                  <th style={thStyle}>Step name</th>
+                  <th style={thStyle}>Doer</th>
+                  <th style={thStyle}>Buddy</th>
+                  <th style={thStyle}>SLA</th>
+                  <th style={thStyle}>Form</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody>
                 {steps.map((step) => (
-                  <tr key={step._id} className="hover:bg-slate-50 transition">
-                    <td className="px-5 py-3.5">
-                      <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-500">
-                        {step.order}
-                      </span>
+                  <tr key={step._id}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'white'}
+                    style={{ backgroundColor: 'white', transition: 'background 0.1s' }}>
+                    <td style={tdStyle}>
+                      <div style={{
+                        width: '26px', height: '26px', borderRadius: '50%',
+                        backgroundColor: '#f1f5f9', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center',
+                        fontSize: '11px', fontWeight: '600', color: '#64748b',
+                      }}>{step.order}</div>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <p className="text-sm font-medium text-slate-700">{step.name}</p>
+                    <td style={tdStyle}>
+                      <p style={{ fontSize: '13px', fontWeight: '500', color: '#374151', margin: 0 }}>{step.name}</p>
                       {step.description && (
-                        <p className="text-xs text-slate-400 mt-0.5 truncate max-w-\[200px\]">
+                        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '2px 0 0', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {step.description}
                         </p>
                       )}
                     </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-semibold text-blue-600">
-                          {step.assigneeId?.name?.charAt(0)}
-                        </div>
-                        <span className="text-sm text-slate-600">{step.assigneeId?.name}</span>
+                    <td style={tdStyle}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                          width: '26px', height: '26px', borderRadius: '50%',
+                          backgroundColor: '#dbeafe', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', fontSize: '11px', fontWeight: '600', color: '#2563eb',
+                        }}>{step.assigneeId?.name?.charAt(0)}</div>
+                        <span style={{ fontSize: '13px', color: '#475569' }}>{step.assigneeId?.name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td style={tdStyle}>
                       {step.buddyId ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-xs font-semibold text-violet-600">
-                            {step.buddyId?.name?.charAt(0)}
-                          </div>
-                          <span className="text-sm text-slate-600">{step.buddyId?.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '26px', height: '26px', borderRadius: '50%',
+                            backgroundColor: '#ede9fe', display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', fontSize: '11px', fontWeight: '600', color: '#7c3aed',
+                          }}>{step.buddyId?.name?.charAt(0)}</div>
+                          <span style={{ fontSize: '13px', color: '#475569' }}>{step.buddyId?.name}</span>
                         </div>
-                      ) : (
-                        <span className="text-xs text-slate-300">—</span>
-                      )}
+                      ) : <span style={{ fontSize: '13px', color: '#cbd5e1' }}>—</span>}
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
-                        <Clock size={11} />
-                        {step.slaMinutes} min
+                    <td style={tdStyle}>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        fontSize: '12px', color: '#64748b', backgroundColor: '#f1f5f9',
+                        padding: '3px 8px', borderRadius: '99px',
+                      }}>
+                        <Clock size={11} /> {step.slaMinutes} min
                       </span>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td style={tdStyle}>
                       {step.formId ? (
-                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                          {step.formId?.title}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-slate-300">No form</span>
-                      )}
+                        <span style={{
+                          fontSize: '12px', color: '#2563eb', backgroundColor: '#eff6ff',
+                          padding: '3px 8px', borderRadius: '99px',
+                        }}>{step.formId?.title}</span>
+                      ) : <span style={{ fontSize: '12px', color: '#cbd5e1' }}>No form</span>}
                     </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(step)}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        >
+                    <td style={{ ...tdStyle, textAlign: 'right' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px' }}>
+                        <button onClick={() => openEdit(step)}
+                          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#eff6ff'; e.currentTarget.style.color = '#2563eb' }}
+                          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#94a3b8' }}
+                          style={{ padding: '6px', border: 'none', backgroundColor: 'transparent', borderRadius: '6px', cursor: 'pointer', color: '#94a3b8', display: 'flex' }}>
                           <Pencil size={14} />
                         </button>
-                        <button
-                          onClick={() => handleDelete(step._id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                        >
+                        <button onClick={() => handleDelete(step._id)}
+                          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#dc2626' }}
+                          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#94a3b8' }}
+                          style={{ padding: '6px', border: 'none', backgroundColor: 'transparent', borderRadius: '6px', cursor: 'pointer', color: '#94a3b8', display: 'flex' }}>
                           <Trash2 size={14} />
                         </button>
                       </div>

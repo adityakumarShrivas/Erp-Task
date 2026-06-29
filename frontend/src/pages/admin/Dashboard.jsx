@@ -4,38 +4,30 @@ import { useGetStepsQuery }       from '../../features/api/stepsApi.js'
 import { useGetFormsQuery }       from '../../features/api/formsApi.js'
 import { useGetAllProcessesQuery } from '../../features/api/processApi.js'
 import Layout from '../../components/Layout.jsx'
-import { PackageOpen, ListChecks, FormInput, AlertTriangle, Clock, CheckCircle2, Circle } from 'lucide-react'
+import { PackageOpen, ListChecks, AlertTriangle, Clock, CheckCircle2, Circle } from 'lucide-react'
 
 function StatCard({ label, value, icon: Icon, color }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${color}`}>
-          <Icon size={16} className="text-white" />
+    <div style={{
+      backgroundColor: 'white', borderRadius: '12px',
+      border: '1px solid #e2e8f0', padding: '20px',
+      minHeight: '110px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: '11px', fontWeight: '600', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          {label}
+        </p>
+        <div style={{
+          width: '32px', height: '32px', borderRadius: '8px',
+          backgroundColor: color, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <Icon size={16} color="white" />
         </div>
       </div>
-      <p className="text-2xl font-semibold text-slate-800">{value ?? '—'}</p>
+      <p style={{ fontSize: '28px', fontWeight: '600', color: '#0f172a', marginTop: '12px' }}>
+        {value ?? '—'}
+      </p>
     </div>
-  )
-}
-
-function StatusBadge({ status }) {
-  const styles = {
-    PENDING: 'bg-amber-50 text-amber-600 border border-amber-200',
-    DONE:    'bg-green-50 text-green-600 border border-green-200',
-    OVERDUE: 'bg-red-50 text-red-600 border border-red-200',
-  }
-  const icons = {
-    PENDING: <Clock size={11} />,
-    DONE:    <CheckCircle2 size={11} />,
-    OVERDUE: <AlertTriangle size={11} />,
-  }
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || styles.PENDING}`}>
-      {icons[status]}
-      {status}
-    </span>
   )
 }
 
@@ -46,59 +38,60 @@ function Dashboard() {
   const { data: forms     = [] } = useGetFormsQuery()
   const { data: processes = [] } = useGetAllProcessesQuery()
 
-  const overdueCount = processes.reduce((acc, p) => {
-    return acc + p.steps.filter((s) => s.status === 'OVERDUE').length
-  }, 0)
+  const overdueCount = processes.reduce((acc, p) =>
+    acc + p.steps.filter((s) => s.status === 'OVERDUE').length, 0)
 
-  const completedCount = processes.reduce((acc, p) => {
-    return acc + p.steps.filter((s) => s.status === 'DONE').length
-  }, 0)
+  const completedCount = processes.reduce((acc, p) =>
+    acc + p.steps.filter((s) => s.status === 'DONE').length, 0)
 
   return (
-    <Layout
-      title="Dashboard"
-      subtitle={`Welcome back, ${user?.name}`}
-    >
-      <div className="space-y-4">
+    <Layout title="Dashboard" subtitle={`Welcome back, ${user?.name}`}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatCard label="Total orders"     value={orders.length}    icon={PackageOpen}   color="bg-blue-500"   />
-          <StatCard label="Workflow steps"   value={steps.length}     icon={ListChecks}    color="bg-violet-500" />
-          <StatCard label="Steps completed"  value={completedCount}   icon={CheckCircle2}  color="bg-green-500"  />
-          <StatCard label="Overdue tasks"    value={overdueCount}     icon={AlertTriangle} color="bg-red-500"    />
+        {/* Stat cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+          <StatCard label="Total orders"    value={orders.length}   icon={PackageOpen}   color="#3b82f6" />
+          <StatCard label="Workflow steps"  value={steps.length}    icon={ListChecks}    color="#8b5cf6" />
+          <StatCard label="Steps completed" value={completedCount}  icon={CheckCircle2}  color="#22c55e" />
+          <StatCard label="Overdue tasks"   value={overdueCount}    icon={AlertTriangle} color="#ef4444" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-4">
+        {/* Panels */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
 
-          <div className="bg-white rounded-xl border border-slate-200">
-            <div className="px-5 py-4 border-b border-slate-100">
-              <h2 className="text-sm font-semibold text-slate-700">Recent orders</h2>
+          {/* Recent orders */}
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
+              <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', margin: 0 }}>Recent orders</h2>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div>
               {orders.length === 0 ? (
-                <div className="px-5 py-8 text-center">
-                  <PackageOpen size={28} className="text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm text-slate-400">No orders yet</p>
+                <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+                  <PackageOpen size={28} color="#cbd5e1" style={{ margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: '13px', color: '#94a3b8' }}>No orders yet</p>
                 </div>
               ) : (
                 orders.slice(0, 5).map((order) => {
                   const process = processes.find(
                     (p) => p.orderId?._id === order._id || p.orderId === order._id
                   )
-                  const done    = process?.steps.filter((s) => s.status === 'DONE').length    || 0
-                  const total   = process?.steps.length || 0
-
+                  const done  = process?.steps.filter((s) => s.status === 'DONE').length || 0
+                  const total = process?.steps.length || 0
                   return (
-                    <div key={order._id} className="px-5 py-3 flex items-center justify-between">
+                    <div key={order._id} style={{
+                      padding: '12px 20px', display: 'flex',
+                      alignItems: 'center', justifyContent: 'space-between',
+                      borderBottom: '1px solid #f8fafc'
+                    }}>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">{order.orderNo}</p>
-                        <p className="text-xs text-slate-400">{order.partyName}</p>
+                        <p style={{ fontSize: '13px', fontWeight: '500', color: '#374151', margin: 0 }}>{order.orderNo}</p>
+                        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '2px 0 0' }}>{order.partyName}</p>
                       </div>
-                      <div className="text-right">
+                      <div style={{ textAlign: 'right' }}>
                         {process ? (
-                          <p className="text-xs text-slate-500">{done}/{total} steps done</p>
+                          <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>{done}/{total} steps done</p>
                         ) : (
-                          <span className="text-xs text-amber-500 font-medium">Not started</span>
+                          <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: '500' }}>Not started</span>
                         )}
                       </div>
                     </div>
@@ -108,27 +101,41 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200">
-            <div className="px-5 py-4 border-b border-slate-100">
-              <h2 className="text-sm font-semibold text-slate-700">Configured steps</h2>
+          {/* Configured steps */}
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
+              <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#374151', margin: 0 }}>Configured steps</h2>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div>
               {steps.length === 0 ? (
-                <div className="px-5 py-8 text-center">
-                  <ListChecks size={28} className="text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm text-slate-400">No steps configured yet</p>
+                <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+                  <ListChecks size={28} color="#cbd5e1" style={{ margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: '13px', color: '#94a3b8' }}>No steps configured yet</p>
                 </div>
               ) : (
                 steps.map((step) => (
-                  <div key={step._id} className="px-5 py-3 flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-500">
+                  <div key={step._id} style={{
+                    padding: '12px 20px', display: 'flex',
+                    alignItems: 'center', gap: '12px',
+                    borderBottom: '1px solid #f8fafc'
+                  }}>
+                    <div style={{
+                      width: '26px', height: '26px', borderRadius: '50%',
+                      backgroundColor: '#f1f5f9', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                      fontSize: '11px', fontWeight: '600', color: '#64748b', flexShrink: 0
+                    }}>
                       {step.order}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-700 truncate">{step.name}</p>
-                      <p className="text-xs text-slate-400">{step.assigneeId?.name} · {step.slaMinutes} min SLA</p>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: '13px', fontWeight: '500', color: '#374151', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {step.name}
+                      </p>
+                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: '2px 0 0' }}>
+                        {step.assigneeId?.name} · {step.slaMinutes} min SLA
+                      </p>
                     </div>
-                    <Circle size={8} className="text-slate-300 flex-shrink-0" />
+                    <Circle size={8} color="#cbd5e1" style={{ flexShrink: 0 }} />
                   </div>
                 ))
               )}
@@ -136,7 +143,6 @@ function Dashboard() {
           </div>
 
         </div>
-
       </div>
     </Layout>
   )

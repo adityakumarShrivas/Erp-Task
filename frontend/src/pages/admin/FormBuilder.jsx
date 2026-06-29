@@ -295,9 +295,9 @@ function FieldCard({ field, index, total, onChange, onDelete, onMoveUp, onMoveDo
 
 function FormEditor({ initial, onClose, onSave, isLoading }) {
   const [title,  setTitle]  = useState(initial?.title  || '')
-  const [fields, setFields] = useState(
-    initial?.fields?.map(f => ({ ...f, _tempId: Math.random() })) || []
-  )
+  const [fields, setFields] = useState(() =>
+  initial?.fields?.map(f => ({ ...f, _tempId: Math.random() })) || []
+)
 
   const addField = () => {
     setFields([...fields, emptyField()])

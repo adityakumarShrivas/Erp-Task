@@ -383,7 +383,7 @@ function FMSTracker() {
 
               {/* Step mini dots */}
               <div style={{ display: 'flex', gap: '6px', marginTop: '12px', flexWrap: 'wrap' }}>
-                {process.steps?.map((step, i) => {
+                {process.steps?.map((step) => {
                   const colors = {
                     DONE:    '#16a34a',
                     PENDING: '#d97706',
