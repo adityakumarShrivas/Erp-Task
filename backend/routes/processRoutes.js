@@ -16,6 +16,6 @@ router.get('/',                                   adminOnly, getAllProcesses)
 router.get('/my-tasks',                           getMyTasks)
 router.get('/order/:orderId',                     getProcessByOrder)
 router.put('/:processId/steps/:stepId/complete',  completeStep)
-router.get('/notifications', protect, getNotifications)
+router.get('/notifications',                      getNotifications)
 
 export default router
