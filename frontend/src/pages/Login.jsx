@@ -132,8 +132,8 @@ function Login() {
         border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px'
       }}>
         <p style={{ fontSize: '11px', fontWeight: '600', color: '#1d4ed8', marginBottom: '8px' }}>Test credentials</p>
-        <p style={{ fontSize: '11px', color: '#2563eb', marginBottom: '4px' }}>Admin: admin@fms.com / Admin1234</p>
-        <p style={{ fontSize: '11px', color: '#2563eb' }}>Doer: doer@fms.com / Doer1234</p>
+        <p style={{ fontSize: '11px', color: '#2563eb', marginBottom: '4px' }}>Admin: Aditya Kumar / 12345678</p>
+        <p style={{ fontSize: '11px', color: '#2563eb' }}>Doer: rohit@gmail.com / 12345678</p>
       </div>
 
     </div>
