@@ -16,7 +16,7 @@ const app = express()
 
 // app.use(cors())
 app.use(cors({
-  origin: 'https://darling-belekoy-98818a.netlify.app',
+  origin: 'https://erp-task-pi.vercel.app',
   credentials: true
 }))
 app.use(express.json())
